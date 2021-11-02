@@ -1,0 +1,8 @@
+2021-10-28 21:30:08.082 - [Info] MITM Version: 1.4
+2021-10-28 21:30:08.085 - [Info] Auto Access Enabled: true
+2021-10-28 21:30:08.085 - [Debug] [Init] Auto Access Barrier: true
+2021-10-28 21:30:08.092 - [Info] Exiting...
+2021-10-28 21:30:08.093 - [Debug] Cleaning up...
+2021-10-28 21:30:08.093 - [Error] Exception occurred: 
+listen EADDRINUSE: address already in use 0.0.0.0:10002
+2021-10-28 21:30:08.093 - [Debug] Cleaning up LXC Streams: 0
