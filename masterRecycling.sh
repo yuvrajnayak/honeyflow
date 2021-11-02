@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # kill mitm 
-countpid=$((`ps aux | grep -c "node"`-1))
+countpid=$(ps aux | grep -c "node")
 
 for i in $(seq $countpid); do
   pid=$(ps aux | grep "node" | awk 'NR == 1 {print $2}')
