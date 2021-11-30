@@ -26,18 +26,6 @@ for i in $(seq $counts); do
   sudo iptables --table nat --delete POSTROUTING 1
 done
 
-#sudo iptables --table nat --delete POSTROUTING 1
-#sudo iptables --table nat --delete POSTROUTING 1
-#sudo iptables --table nat --delete POSTROUTING 1
-#sudo iptables --table nat --delete POSTROUTING 1
-
-#sudo iptables --table nat --delete PREROUTING 1
-#sudo iptables --table nat --delete PREROUTING 1
-#sudo iptables --table nat --delete PREROUTING 1
-#sudo iptables --table nat --delete PREROUTING 1
-
-
-
 sudo iptables --table nat --insert PREROUTING --source 0.0.0.0/0 --destination 128.8.238.102 --jump DNAT --to-destination `sudo lxc-info -n m1 -iH`
 sudo iptables --table nat --insert POSTROUTING --source `sudo lxc-info -n m1 -iH`  --destination 0.0.0.0/0 --jump SNAT --to-source 128.8.238.102
 
@@ -49,3 +37,11 @@ sudo iptables --table nat --insert POSTROUTING --source `sudo lxc-info -n s1 -iH
 
 sudo iptables --table nat --insert PREROUTING --source 0.0.0.0/0 --destination 128.8.238.66 --jump DNAT --to-destination `sudo lxc-info -n s2 -iH`
 sudo iptables --table nat --insert POSTROUTING --source `sudo lxc-info -n s2 -iH`  --destination 0.0.0.0/0 --jump SNAT --to-source 128.8.238.66
+
+# ip banning
+count_input=$((`sudo iptables --list INPUT --numeric --verbose | wc -l` - 6))
+
+for i in $(seq $count_input); do
+  sudo iptables -D INPUT i
+done
+

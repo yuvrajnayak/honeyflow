@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # kill mitm 
-countpid=$(ps aux | grep -c "node")
+countpid=$(ps aux | grep "node" | grep -v "grep" | wc -l)
 
 for i in $(seq $countpid); do
-  pid=$(ps aux | grep "node" | awk 'NR == 1 {print $2}')
+  pid=$(ps aux | grep "node" | grep -v "grep" | awk 'NR == 1 {print $2}')
   kill -9 $pid
 done
 
@@ -27,9 +27,31 @@ for i in $(seq $counts); do
   sudo iptables --table nat --delete POSTROUTING 1
 done
 
+# delete old ban list
+count_input=$((`sudo iptables --list INPUT --numeric --verbose | wc -l` - 6))
+for i in $(seq $count_input); do
+  sudo iptables -D INPUT 1
+done
+
+# add new ban list
+for line in $(cat /root/MITM_data/logins/* | cut -d ";" -f 2 | sort | uniq)
+do
+  iptables -I INPUT -s $line -j DROP
+  echo "$line banned!"
+done
+
 # mitm for all 4 containers
-/honeyflow/mitmSetup.sh m1 128.8.238.102 10001
-/honeyflow/mitmSetup.sh m2 128.8.238.123 10002
-/honeyflow/mitmSetup.sh s1 128.8.238.77 10003
-/honeyflow/mitmSetup.sh s2 128.8.238.66 10004
+iplist=('128.8.238.102' '128.8.238.123' '128.8.238.77' '128.8.238.66')
+iplist=( $(shuf -e "${iplist[@]}") )
+
+cp /honeyflow/banners/no_honey_motd.txt /var/lib/lxc/m1/rootfs/etc/motd
+cp /honeyflow/banners/email_phone_motd.txt /var/lib/lxc/m2/rootfs/etc/motd
+cp /honeyflow/banners/research_data_motd.txt /var/lib/lxc/s1/rootfs/etc/motd
+cp /honeyflow/banners/high_perf_motd.txt /var/lib/lxc/s2/rootfs/etc/motd
+
+/honeyflow/mitmSetup.sh m1 ${iplist[0]} 10005
+/honeyflow/mitmSetup.sh m2 ${iplist[1]} 10006
+/honeyflow/mitmSetup.sh s1 ${iplist[2]} 10007
+/honeyflow/mitmSetup.sh s2 ${iplist[3]} 10008
+
 
